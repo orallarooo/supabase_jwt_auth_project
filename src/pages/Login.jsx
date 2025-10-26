@@ -2,8 +2,11 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router';
 
 import supabase from "../helper/supabaseClient"
+import { useAuthStore } from '../assets/authStore'
 
 export function Login() {
+  const setUser = useAuthStore((s) => s.setUser)
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,15 +20,15 @@ export function Login() {
       email: email,
       password: password
     })
-
+    
     if (error) {
       setMessage(error.message);
       return;
     }
 
-    if (data) {
-      navigate('/dashboard');
-      return;
+    if (data?.user) {
+      setUser(data.user) // 💾 сохраняем в Zustand
+      navigate('/dashboard')
     }
 
 
